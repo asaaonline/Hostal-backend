@@ -11,7 +11,6 @@ router.post('/login',function(req,resp){
     console.log(req.body);
     const name=req.body.name;
     const password=req.body.password;
-
    
 connect.query('select password from login where name=?',[name],(error,rows,fields)=>{
     
