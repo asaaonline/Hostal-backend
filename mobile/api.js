@@ -1,28 +1,69 @@
 const express=require('express');
 const router=express.Router();
 const connect=require('../connection/connect')
+var bcrypt = require('bcrypt');
+const saltRounds = 10;
 
-router.post('/login',function(req,res){
+
+router.post('/login',function(req,resp){
+
     console.log('post login reqvest mobile');
-connect.query("select * from login",(error,rows,fields)=>{
-        console.log(error);
+    console.log(req.body);
+    const name=req.body.name;
+    const password=req.body.password;
+
+   
+connect.query('select password from login where name=?',[name],(error,rows,fields)=>{
+    
         console.log(rows);
       
-            if(error){
+            if(!!error){
                 console.log("error in the code");
             }else{
                  console.log("successfull");
-               
-                 res.send({
-                     type:'GET',
-                    name:'asela' 
-                 });               
+                 var compair;
+                 bcrypt.compare(password,rows[0].password, function(err, res) {
+                   compair=res;
+                   console.log(res);
+                    if(compair){
+                        resp.send({
+                            type:'post',
+                            status:'correct'
+                        });
+                    }else{
+                        resp.send({
+                            type:'post',
+                            status:'false'
+                        });
+                    }
+                   
+                   
+                });
+              
+                          
             }
     });
+
+
 });
 
 router.post('/sinup',function(req,res){
     console.log(req.body);
+
+    const name=req.body.name;
+    const password=req.body.password;
+    bcrypt.hash(password, saltRounds, function(err, hash) {
+        // Store hash in your password DB.
+    
+    connect.query('insert into login(name,password) value(?,?)',[name,hash],(error,rows,fields)=>{
+            if(!!error){
+                console.log(error);
+            }else{
+                console.log("succsess");
+            }
+    })
+   
+});
     res.send({
         type:'post',
         name:req.body.name
