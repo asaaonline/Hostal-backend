@@ -1,9 +1,18 @@
 const express=require('express');
 const routes=require('./mobile/api');
+const bodyParser=require('body-parser');
+
+
 //set up express app
 
 const app=express();
-app.use(routes);
+
+
+app.use(bodyParser.json());
+
+app.use('/mobile',routes);
+//initialize routes
+
 
 app.get('/',function(req,res){
     console.log('get reqvest');
