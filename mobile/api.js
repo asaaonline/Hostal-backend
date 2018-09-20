@@ -11,6 +11,7 @@ router.post('/login',function(req,resp){
     console.log(req.body);
     const name=req.body.name;
     const password=req.body.password;
+    if(name!==null && password!==null){
    
 connect.query('select password from login where name=?',[name],(error,rows,fields)=>{
     
@@ -21,28 +22,32 @@ connect.query('select password from login where name=?',[name],(error,rows,field
             }else{
                  console.log("successfull");
                  var compair;
+                 console.log(rows.length);
+                 if(rows.length!==0){
                  bcrypt.compare(password,rows[0].password, function(err, res) {
                    compair=res;
                    console.log(res);
                     if(compair){
                         resp.send({
                             type:'post',
-                            status:'correct'
+                            status:'correct',
+                            name:req.body.name
                         });
                     }else{
                         resp.send({
                             type:'post',
                             status:'false'
+                            
                         });
                     }
                    
                    
                 });
-              
+            }
                           
             }
     });
-
+    }
 
 });
 
